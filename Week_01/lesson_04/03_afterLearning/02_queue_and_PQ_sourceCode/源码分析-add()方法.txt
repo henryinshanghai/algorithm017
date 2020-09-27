@@ -1,0 +1,71 @@
+------
+Queue的源码分析（自己玩）；
+使用具体的实现类LinkedList；
+	LinkedList实现Deque接口，而Deque接口继承了Queue接口；
+	
+只分析增删方法：
+	add():
+		add(Item e) - linkLast(e)[把添加的元素作为最后一个元素]
+		源码说明：
+			1 使用程序员传入的参数来创建一个新的节点A；
+			2 把指针last指向节点A；
+			3 建立节点A与旧的尾节点以及nil节点之间的连接关系。
+			
+		void linkLast(E e) {
+			// 1 使用程序员传入的参数来创建一个新的节点A；
+			final Node<E> l = last;
+			final Node<E> newNode = new Node<>(l, e, null); // prev, element, next
+			
+			// 2 把指针last指向节点A；
+			last = newNode;
+			
+			// 3 建立节点A与旧的尾节点以及nil节点之间的连接关系。
+			if (l == null)
+				first = newNode;
+			else
+				l.next = newNode;
+			size++;
+			modCount++;
+		}
+		
+	OUT~
+			
+	remove():
+		remove() - removeFirst():
+			把first指针指向的节点绑定到局部变量f上；
+			判断first指针指向的节点是否为nil，如果是说明链表已经空了 抛异常即可
+			调用unlinkFirst(f);
+				移动first指针到下一个节点的位置，然后做一些帮助GC的工作；
+	OUT~
+			
+		
+------
+PriorityQueue的源码分析（自己玩）：
+
+- add():
+	- offer():
+		1 不能插入一个nil元素；
+		2 插入之前先判断队列的容量是否足够，如果不够的话，进行扩容；
+		3 更新表示队列中元素个数的全局变量size；
+		4 把程序员传入的参数，作为元素添加到底层数组中；
+			if (i == 0)
+				queue[0] = e; // 如果是首次插入元素，直接添加到数组的第一个位置即可
+			else
+				siftUp(i, e); // 如果不是第一次插入元素，会有点子复杂
+				作用：把元素x插入到指定的位置k，同时要在添加元素后保持堆的性质不变；
+				手段：把插入的元素沿着树（一种逻辑结构）向上浮，直到：
+					1 元素节点大于或等于它的父节点；
+					2 元素节点成为了根节点；
+				特征： Comparable 与 Comparator的两种比较方式分别放在不同的方法中实现
+				说明：如果之前没有看过堆的实现的话，单是看这个方法的作用就已经抓瞎了
+				代码：
+					if (comparator != null)
+						siftUpUsingComparator(k, x);
+					else
+						siftUpComparable(k, x);
+					
+					siftUpUsingComparator
+					具体的代码就是在使用一个while循环来不断比较当前节点与父节点的大小关系，
+						直到把元素绑定到正确的数组位置；
+						
+					类比：MaxPQ_drill01 不同的代码，做同样的事情

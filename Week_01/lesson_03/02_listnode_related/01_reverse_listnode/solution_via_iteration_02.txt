@@ -1,0 +1,35 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    // 迭代的方式
+    public ListNode reverseList(ListNode head) {
+        // 怎么能反转节点的指向呢？
+        // 0 鲁棒性代码
+        if(head == null || head.next == null) return head;
+
+        // 准备一些初始化了的指针
+        ListNode prev = null;
+        ListNode curr = head;
+        // 准备一个循环
+        while(curr != null){ // curr == null时，表示链表中的所有节点都已经反转了
+            /* 反转当前节点的指向 */
+            // 记录当前节点的下一个节点
+            ListNode temp = curr.next;
+
+            // 反转当前节点的指向
+            curr.next = prev;
+
+            // 更新当前的指针范围
+            prev = curr;
+            curr = temp;
+        }
+
+        return prev; // 返回翻转后的链表的头节点
+    }
+}

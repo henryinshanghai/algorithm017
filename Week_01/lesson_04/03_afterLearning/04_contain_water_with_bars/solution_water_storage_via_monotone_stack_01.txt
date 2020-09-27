@@ -1,0 +1,45 @@
+class Solution {
+    public int trap(int[] height) {
+        // 0 
+        if (height == null) {
+            return 0;
+        }
+
+        // 1 准备一个栈 用作单调栈
+        Stack<Integer> stack = new Stack<>();
+        // 2 准备一个int变量  用于记录存储水的量
+        int ans = 0;
+
+        // 3 准备一个循环 计算每一个柱子所能存储的水量 并进行累加
+        for (int i = 0; i < height.length; i++) {
+
+            /* 4 尝试把当前柱子的索引添加到单调栈中 */
+            // 4-1 在2添加索引入栈之前，比较所添加的索引 与 栈顶元素的大小关系————维护栈中元素的单调递减性
+            // 手段：比较栈顶索引对应的元素 与 当前柱子元素
+            while(!stack.isEmpty() && height[stack.peek()] < height[i]) { // 如果更小，则...
+                // 弹出栈顶元素
+                int curIdx = stack.pop();
+
+                // 弹出栈顶元素后...
+                // 如果栈顶元素一直相等，那么全都pop出去，只留第一个。
+                while (!stack.isEmpty() && height[stack.peek()] == height[curIdx]) {
+                    stack.pop();
+                }
+
+                // 5 累计计算所能接住雨水的数量（经过上述处理后，stack已经是一个单调栈了）
+                // 单调栈的作用：获取到当前元素的左右边界【】
+                if (!stack.isEmpty()) {
+
+                    // 获取到当前的栈顶元素
+                    int stackTop = stack.peek();
+                    // stackTop此时指向的是此次接住的雨水的左边界的位置。右边界是当前的柱体，即i。
+                    // Math.min(height[stackTop], height[i]) 是左右柱子高度的min，减去height[curIdx]就是雨水的高度。
+                    // i - stackTop - 1 是雨水的宽度。
+                    ans += (Math.min(height[stackTop], height[i]) - height[curIdx]) * (i - stackTop - 1);
+                }
+            }
+            stack.add(i);
+        }
+        return ans;
+    }
+}

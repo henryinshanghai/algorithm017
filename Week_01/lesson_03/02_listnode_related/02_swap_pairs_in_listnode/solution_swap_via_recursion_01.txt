@@ -1,0 +1,18 @@
+// 递归方式实现：成对地交换链表中的节点，并返回新链表的头节点
+    // 1 -> 2 -> 3 -> 4
+    // 2 -> 1 -> 4 -> 3
+    private static ListNode swapPairs(ListNode head) {
+        // 1 递归终结条件
+        if (head == null || head.next == null) return head;
+
+        // 2 本级递归要做的事情
+        ListNode second = head.next;
+        ListNode subListHead = second.next;
+
+        ListNode subListSwapRes = swapPairs(subListHead);
+
+        second.next = head;
+        head.next = subListSwapRes;
+
+        return second;
+    }

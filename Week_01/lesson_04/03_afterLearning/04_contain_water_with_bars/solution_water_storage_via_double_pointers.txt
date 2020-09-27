@@ -1,0 +1,47 @@
+class Solution {
+    public int trap(int[] height) {
+        if (height.length <= 2)
+        return 0;
+
+        //找到最高的柱子的下标 maxIndex
+        int max = 0;
+        int maxIndex = 0;
+        for (int i = 0; i <= height.length-1; i++) {
+            if (height[i] > max) {
+                max = height[i];
+                maxIndex = i;   
+            }
+        }
+
+        int water = 0;  
+
+        //统计最高柱子左边能接的雨水数量
+        int b = 0;
+        for(int a=0; a<=maxIndex; a++){
+            // 如果a索引的值小于b索引的值，a指针是先走的，说明有凹槽能放水，则：... 
+            if(height[a]<height[b]){
+                // water = water + (b索引的值 - a索引的值)，让a指针继续走(a++)
+                water = water + (height[b]-height[a]);
+            }
+            // 如果a指针的值大于b指针的值，说明他们之间没有凹槽（有也已经计算进water了）。则:... 
+            if(height[a]>height[b]){
+                // 使b=a
+                b = a;
+            }
+        }
+
+
+        //统计最高柱子右边能接的雨水数量
+        b = height.length-1;
+        for (int a = height.length - 1; a>=maxIndex; a--) {
+            if(height[a]<height[b]){
+                water = water + (height[b]-height[a]);
+            }
+            if(height[a]>height[b]){
+                b=a;
+            }
+        }
+
+        return water;
+    }
+}
